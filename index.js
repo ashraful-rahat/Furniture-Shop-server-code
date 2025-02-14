@@ -30,19 +30,34 @@ async function run() {
     // Define collections
     const furnitureCollection = client.db('furniture-house').collection('AllFurniture');
 
+    const productsCollection = client.db('furniture-house').collection('Products')
+
     // Define routes
+    //all furniture route
     app.get('/furniture', async (req, res) => {
       const furniture = await furnitureCollection.find().toArray();
       res.json(furniture);
     });;
 
+
+  //id wise on furniture details
     app.get('/furniture/:id', async (req, res) => {
       const id = req.params.id;
       const furniture = await furnitureCollection.findOne({ _id: new ObjectId(id) });
       res.json(furniture);
     });
 
-    
+
+  // product add cart
+    app.post('/products', async (req, res) => {
+      const productsCollection = client.db('furniture-house').collection('Products');
+      const product = req.body; 
+  
+      const result = await productsCollection.insertOne(product);
+      res.status(201).json(result);
+  });
+  
+  
 
     // Ping MongoDB to confirm connection
     await client.db("admin").command({ ping: 1 });
