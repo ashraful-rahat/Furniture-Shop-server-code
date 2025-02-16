@@ -48,16 +48,28 @@ async function run() {
     });
 
 
-  // product add cart
-    app.post('/products', async (req, res) => {
-      const productsCollection = client.db('furniture-house').collection('Products');
-      const product = req.body; 
   
-      const result = await productsCollection.insertOne(product);
-      res.status(201).json(result);
-  });
+// Add a new product to the Products collection
+app.post('/products', async (req, res) => {
+
   
+  // Get the product data from the request body
+  const product = req.body; 
   
+  // Ensure the product doesn't have an _id field in the request body
+  if (product._id) {
+    delete product._id; // MongoDB will auto-generate the _id if it's not provided
+  }
+
+  try {
+    const result = await productsCollection.insertOne(product);
+    res.status(201).json(result);
+  } catch (error) {
+    console.error("Error adding product:", error);
+    res.status(500).json({ error: "Failed to add product to database" });
+  }
+});
+
 
     // Ping MongoDB to confirm connection
     await client.db("admin").command({ ping: 1 });
