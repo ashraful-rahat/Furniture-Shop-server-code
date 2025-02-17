@@ -51,16 +51,10 @@ async function run() {
   
 // Add a new product to the Products collection
 app.post('/products', async (req, res) => {
-
-  
-  // Get the product data from the request body
-  const product = req.body; 
-  
-  // Ensure the product doesn't have an _id field in the request body
+ const product = req.body; 
   if (product._id) {
-    delete product._id; // MongoDB will auto-generate the _id if it's not provided
+    delete product._id; 
   }
-
   try {
     const result = await productsCollection.insertOne(product);
     res.status(201).json(result);
